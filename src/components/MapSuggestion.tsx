@@ -1,28 +1,65 @@
 import { MapSuggestion as MapSuggestionType } from "@/types/types";
-import { Star } from "lucide-react";
+import { Share2, Star } from "lucide-react";
+import { Button } from "./ui/button";
+import { toast } from "sonner";
 
 interface MapSuggestionProps {
   suggestion: MapSuggestionType;
 }
 
 export const MapSuggestion = ({ suggestion }: MapSuggestionProps) => {
+  const handleShare = async () => {
+    const shareData = {
+      title: "CarteidIA - Suggestion de carte",
+      text: `${suggestion.title}\n\nDescription: ${suggestion.description}\n\nMots-clés: ${suggestion.keywords.join(", ")}`,
+      url: window.location.href,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        toast.success("Partagé avec succès");
+      } else {
+        await navigator.clipboard.writeText(
+          `${shareData.title}\n\n${shareData.text}\n\n${shareData.url}`
+        );
+        toast.success("Lien copié dans le presse-papier");
+      }
+    } catch (error) {
+      toast.error("Erreur lors du partage");
+    }
+  };
+
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-8 space-y-6 shadow-sm hover:shadow-md transition-all">
       <div className="flex justify-between items-start">
-        <h3 className="text-2xl font-bold text-gray-900 leading-tight tracking-tight">
-          {suggestion.title}
-        </h3>
-        <div className="flex items-center gap-1 bg-gray-50 p-2 rounded-lg">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Star
-              key={i}
-              className={`w-5 h-5 ${
-                i < suggestion.decisionScore
-                  ? "text-yellow-400 fill-yellow-400"
-                  : "text-gray-300"
-              }`}
-            />
-          ))}
+        <div className="flex-1">
+          <h3 className="text-2xl font-bold text-gray-900 leading-tight tracking-tight">
+            {suggestion.title}
+          </h3>
+        </div>
+        <div className="flex items-center gap-4">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={handleShare}
+            className="rounded-full"
+            title="Partager"
+          >
+            <Share2 className="h-4 w-4" />
+          </Button>
+          <div className="flex items-center gap-1 bg-gray-50 p-2 rounded-lg">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                className={`w-5 h-5 ${
+                  i < suggestion.decisionScore
+                    ? "text-yellow-400 fill-yellow-400"
+                    : "text-gray-300"
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
