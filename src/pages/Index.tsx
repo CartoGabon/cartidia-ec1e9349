@@ -11,15 +11,45 @@ const Index = () => {
   const [suggestions, setSuggestions] = useState<MapSuggestion[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const generateSuggestions = () => {
+  const sendToWebhook = async (data: any) => {
+    try {
+      const response = await fetch('https://hook.eu2.make.com/87cgun146mknrzormw5l63ltytqtmx94', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de l\'envoi au webhook');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Erreur webhook:', error);
+      toast.error("Erreur lors de l'envoi des données");
+      throw error;
+    }
+  };
+
+  const generateSuggestions = async () => {
     if (layers.length === 0) {
       toast.error("Veuillez ajouter au moins une couche");
       return;
     }
 
     setIsGenerating(true);
-    // Simulation de génération
-    setTimeout(() => {
+    
+    try {
+      // Envoi des données au webhook
+      await sendToWebhook({
+        action: 'generate',
+        layers: layers,
+        timestamp: new Date().toISOString()
+      });
+
+      // Simulation de génération (gardée pour la démo)
       const newSuggestions: MapSuggestion[] = Array.from({ length: 5 }).map(
         (_, i) => ({
           id: i,
@@ -37,9 +67,12 @@ const Index = () => {
       );
 
       setSuggestions(newSuggestions);
-      setIsGenerating(false);
       toast.success("Suggestions générées avec succès");
-    }, 2000);
+    } catch (error) {
+      toast.error("Erreur lors de la génération des suggestions");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
