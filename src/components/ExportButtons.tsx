@@ -1,4 +1,4 @@
-import { FilePdf, FileText, FileCsv } from "lucide-react";
+import { FileText, Files } from "lucide-react";
 import { MapSuggestion } from "@/types/types";
 import { toast } from "sonner";
 
@@ -18,14 +18,14 @@ export const ExportButtons = ({ suggestions }: ExportButtonsProps) => {
         onClick={() => handleExport("PDF")}
         className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
       >
-        <FilePdf className="w-5 h-5" />
+        <FileText className="w-5 h-5" />
         PDF
       </button>
       <button
         onClick={() => handleExport("CSV")}
         className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
       >
-        <FileCsv className="w-5 h-5" />
+        <Files className="w-5 h-5" />
         CSV
       </button>
       <button
