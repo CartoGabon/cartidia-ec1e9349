@@ -3,7 +3,7 @@ import { Layer, MapSuggestion } from "@/types/types";
 import { LayerUpload } from "@/components/LayerUpload";
 import { MapSuggestion as MapSuggestionComponent } from "@/components/MapSuggestion";
 import { ExportButtons } from "@/components/ExportButtons";
-import { RefreshCw, Play } from "lucide-react";
+import { RefreshCw, Play, Map } from "lucide-react";
 import { toast } from "sonner";
 
 const Index = () => {
@@ -76,70 +76,80 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
-        <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold text-gray-900">CarteidIA</h1>
-          <p className="text-xl text-gray-600">
-            Générez des suggestions de cartes professionnelles
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
+      <div className="max-w-7xl mx-auto px-4 py-12 space-y-12">
+        {/* Hero Section */}
+        <div className="text-center space-y-6">
+          <div className="flex items-center justify-center mb-8">
+            <Map className="w-16 h-16 text-purple-600 mr-4" />
+            <h1 className="text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-500">
+              CARTIDIA
+            </h1>
+          </div>
+          <p className="text-2xl text-gray-600 font-light max-w-2xl mx-auto">
+            Votre générateur d'idées de cartes
           </p>
+          <div className="h-1 w-20 bg-gradient-to-r from-purple-600 to-blue-500 mx-auto rounded-full" />
         </div>
 
-        <LayerUpload layers={layers} setLayers={setLayers} />
+        {/* Main Content */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 space-y-8">
+          <LayerUpload layers={layers} setLayers={setLayers} />
 
-        <div className="flex justify-center gap-4">
-          <button
-            onClick={generateSuggestions}
-            disabled={isGenerating || layers.length === 0}
-            className={`flex items-center gap-2 px-6 py-3 bg-blue-500 text-white rounded-lg
-              ${
-                isGenerating || layers.length === 0
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-blue-600"
-              } transition-colors`}
-          >
-            <Play className="w-5 h-5" />
-            Générer
-          </button>
-
-          {suggestions.length > 0 && (
+          <div className="flex justify-center gap-4">
             <button
               onClick={generateSuggestions}
-              disabled={isGenerating}
-              className={`flex items-center gap-2 px-6 py-3 bg-purple-500 text-white rounded-lg
+              disabled={isGenerating || layers.length === 0}
+              className={`flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg
                 ${
-                  isGenerating
+                  isGenerating || layers.length === 0
                     ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-purple-600"
-                } transition-colors`}
+                    : "hover:opacity-90 transform hover:scale-105 transition-all"
+                }`}
             >
-              <RefreshCw
-                className={`w-5 h-5 ${isGenerating ? "animate-spin" : ""}`}
-              />
-              Régénérer
+              <Play className="w-5 h-5" />
+              Générer
             </button>
+
+            {suggestions.length > 0 && (
+              <button
+                onClick={generateSuggestions}
+                disabled={isGenerating}
+                className={`flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg
+                  ${
+                    isGenerating
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:opacity-90 transform hover:scale-105 transition-all"
+                  }`}
+              >
+                <RefreshCw
+                  className={`w-5 h-5 ${isGenerating ? "animate-spin" : ""}`}
+                />
+                Régénérer
+              </button>
+            )}
+          </div>
+
+          {suggestions.length > 0 && (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center border-b border-gray-200 pb-4">
+                <h2 className="text-2xl font-semibold text-gray-900">
+                  Suggestions de cartes
+                </h2>
+                <ExportButtons suggestions={suggestions} />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {suggestions.map((suggestion) => (
+                  <MapSuggestionComponent
+                    key={suggestion.id}
+                    suggestion={suggestion}
+                  />
+                ))}
+              </div>
+            </div>
           )}
         </div>
-
-        {suggestions.length > 0 && (
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-semibold text-gray-900">
-                Suggestions de cartes
-              </h2>
-              <ExportButtons suggestions={suggestions} />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {suggestions.map((suggestion) => (
-                <MapSuggestionComponent
-                  key={suggestion.id}
-                  suggestion={suggestion}
-                />
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
